@@ -96,7 +96,7 @@ function display() {
             var still = response.data[j].images.fixed_width_still.url;
             var rating = "Rating: " + (response.data[j].rating).toUpperCase();
             
-            var sportsImage = $("<img>");
+            var sportImage = $("<img>");
             
             
 
@@ -105,7 +105,7 @@ function display() {
             
             var ratingDiv = $("<div id='ratingDiv'>" + rating + "</div>");
             $(ratingDiv).css({"text-align":"center", "font-size":"20px", "width":"200", "display":"block"});
-            spaceImage.attr({"active":active, "still":still, "src":still, "state":"still"});
+            sportImage.attr({"active":active, "still":still, "src":still, "state":"still"});
             
             var ratingAndImage = $("<div>");
             $(ratingAndImage).css({"float":"left"});
@@ -113,7 +113,7 @@ function display() {
             
             $("#ratings").prepend(ratingAndImage);
             
-            $(spaceImage).on("click", function(event) {
+            $(sportImage).on("click", function(event) {
                 
                 $("#entry").empty();
                 
