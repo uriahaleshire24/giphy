@@ -1,0 +1,134 @@
+\<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>GIPHY API</title>
+
+        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        
+       
+        <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+    	
+    </head>
+<body>
+
+<body background="./assets/img/s-l300.jpg">
+
+<h4 class="text-center" style="color: lime">Please click on a button to display 10 giphs and their rating, or add your own button with any search term you choose.</p><p>If there are less than 10 results for it, I will let you know.  Click on the picture to start/stop the animation.  Have fun!</h4>
+
+
+<div id="buttonItems"></div>
+
+
+<form>
+    <div class="row">
+        <div class="col-md-3">
+            <input type="text" id="sport-input" class="form-control" placeholder="Add something sporty...">
+        </div>
+        <input id="addSportThing" type="submit" class="btn btn-success" value="MAKE IT SO #1!">
+        
+        <span id="entry" style="color: white; background: red"></span>
+    </div>
+</form>
+
+
+<div id="ratings"></div>
+
+
+
+
+
+
+<script type="text/javascript">
+    
+	var sportStuff = ["Archery", "Basketball", "Cycling", "wrestling", "martial arts", "Football", "Golf", "Gymnastics", "Hunting", "Running", "Sailing", "Skiing", "Hockey","Lacrosse"];
+    var sportImage = "";
+
+function showButtons () {
+    $("#buttonItems").empty();
+    $("#sport-input").val("");
+    for (var i = 0; i < sportStuff.length; i++) {
+        var button = $("<button class='btn btn-primary'>");
+        button.addClass("sport");
+        button.attr("sport-name", sportStuff[i]);
+        button.text(sportStuff[i]);
+        $("#buttonItems").append(button);
+        $("#buttonItems").append(" ");
+    }
+}
+showButtons();
+
+
+
+$("#addSportThing").on("click", function(event) {
+    $("#entry").empty();
+    event.preventDefault();
+    var sportInput = $("#sport-input").val().trim();
+    var sportTerm = $(this).attr("sport-name");
+ 
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + sportInput + "&limit=2&api_key=dc6zaTOxFJmzC";
+        $.ajax({ url: queryURL, method: "GET"}).done(function(response) {
+        if (response.pagination.total_count >= 10) {
+            sportStuff.push(sportInput);
+            showButtons(); }
+        else if (response.pagination.total_count === 0) {
+            $("#entry").html(" Sorry, there were no results for this.  Please try again."); }
+        else if (response.pagination.total_count === 1) { $("#entry").html(" Sorry, there was only 1 result for this.  Please try again."); }
+        else { $("#entry").html(" Sorry, there were only " + response.pagination.total_count + " results for this.  Please try again."); }
+        $("#sport-input").val("");
+        });
+});
+$(document).on("click", ".sport", display);
+function display() {
+    
+    $("#entry").empty();
+    var sportTerm = $(this).attr("sport-name");
+    
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + sportTerm + "&limit=10&api_key=dc6zaTOxFJmzC";
+    $.ajax({ url: queryURL, method: "GET"}).done(function(response) {
+        
+        for (var j = 0; j < response.data.length; j++) {
+            
+            
+            var active = response.data[j].images.fixed_width.url;
+            
+            var still = response.data[j].images.fixed_width_still.url;
+            var rating = "Rating: " + (response.data[j].rating).toUpperCase();
+            
+            var sportsImage = $("<img>");
+            
+            
+
+
+            $("#ratings").css("color", "green");
+            
+            var ratingDiv = $("<div id='ratingDiv'>" + rating + "</div>");
+            $(ratingDiv).css({"text-align":"center", "font-size":"20px", "width":"200", "display":"block"});
+            spaceImage.attr({"active":active, "still":still, "src":still, "state":"still"});
+            
+            var ratingAndImage = $("<div>");
+            $(ratingAndImage).css({"float":"left"});
+            $(ratingAndImage).prepend(ratingDiv, sportImage);
+            
+            $("#ratings").prepend(ratingAndImage);
+            
+            $(spaceImage).on("click", function(event) {
+                
+                $("#entry").empty();
+                
+                var state = $(this).attr("state");
+                var source = $(this).attr("src");
+                if (state === "still") {
+                $(this).attr("src", $(this).attr("active"));
+                $(this).attr("state", "active"); }
+                else {
+                $(this).attr("src", $(this).attr("still"));
+                $(this).attr("state", "still"); } 
+            });
+        }
+   });
+}
+</script>
+</body>
+</html>
